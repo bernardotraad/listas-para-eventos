@@ -39,6 +39,7 @@ export default function DashboardPage() {
       try {
         console.log('📊 Carregando dados do dashboard...');
         console.log('👤 Usuário atual:', user);
+        console.log('🎫 Token atual:', localStorage.getItem('token') ? localStorage.getItem('token')?.substring(0, 20) + '...' : 'null');
         setIsLoading(true);
         
         // Carregar eventos
@@ -56,6 +57,8 @@ export default function DashboardPage() {
             activeEvents: activeEvents.length
           }));
           console.log('✅ Eventos carregados com sucesso');
+        } else {
+          console.error('❌ Erro ao carregar eventos:', eventsResponse);
         }
 
         // Carregar dados de participantes (se for portaria)
@@ -69,12 +72,14 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error('❌ Erro ao carregar dados do dashboard:', error);
+        console.error('❌ Detalhes do erro:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (user) {
+      console.log('👤 Usuário disponível, carregando dashboard...');
       loadDashboardData();
     } else {
       console.log('⏳ Aguardando usuário para carregar dashboard...');

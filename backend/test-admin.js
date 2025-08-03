@@ -1,80 +1,79 @@
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
+const axios = require('axios');
 
-async function testAdminUser() {
+const API_URL = 'https://listas-eventos-backend.onrender.com/api';
+
+async function testAdmin() {
   try {
-    console.log('🧪 Testando busca do usuário admin...');
+    console.log('🔍 Testando configuração do admin...');
     
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const anonKey = process.env.SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl) {
-      throw new Error('SUPABASE_URL é obrigatório');
-    }
-
-    // Usar service role key se disponível, senão usar anon key
-    const supabaseKey = serviceRoleKey || anonKey;
-    
-    if (!supabaseKey) {
-      throw new Error('SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_ANON_KEY é obrigatório');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
-
-    if (serviceRoleKey) {
-      console.log('🔑 Usando service role key (bypass RLS)');
-    } else {
-      console.log('⚠️  Usando anon key (pode falhar devido a RLS)');
-    }
-
-    // Testar busca do admin
-    const { data: adminUser, error } = await supabase
-      .from('users')
-      .select('id, username, email, role, is_active')
-      .eq('username', 'admin')
-      .single();
-
-    if (error) {
-      console.error('❌ Erro ao buscar admin:', error);
+    // Teste 1: Verificar se o servidor está rodando
+    console.log('\n📡 Teste 1: Verificando se o servidor está rodando...');
+    try {
+      const healthResponse = await axios.get(`${API_URL}/health`);
+      console.log('✅ Servidor está rodando:', healthResponse.data);
+    } catch (error) {
+      console.log('❌ Servidor não está respondendo:', error.message);
       return;
     }
 
-    if (adminUser) {
-      console.log('✅ Usuário admin encontrado:');
-      console.log('   ID:', adminUser.id);
-      console.log('   Username:', adminUser.username);
-      console.log('   Email:', adminUser.email);
-      console.log('   Role:', adminUser.role);
-      console.log('   Ativo:', adminUser.is_active);
-    } else {
-      console.log('❌ Usuário admin não encontrado');
+    // Teste 2: Verificar variáveis de ambiente
+    console.log('\n🔧 Teste 2: Verificando variáveis de ambiente...');
+    try {
+      const envResponse = await axios.get(`${API_URL}/auth/env-check`);
+      console.log('✅ Variáveis de ambiente:', envResponse.data);
+    } catch (error) {
+      console.log('❌ Erro ao verificar variáveis de ambiente:', error.message);
     }
 
-    // Testar busca de todos os usuários
-    const { data: allUsers, error: allUsersError } = await supabase
-      .from('users')
-      .select('id, username, email, role');
+    // Teste 3: Login do admin
+    console.log('\n🔐 Teste 3: Testando login do admin...');
+    const loginData = {
+      username: 'admin',
+      password: 'admin123'
+    };
 
-    if (allUsersError) {
-      console.error('❌ Erro ao buscar todos os usuários:', allUsersError);
-    } else {
-      console.log(`📊 Total de usuários no banco: ${allUsers?.length || 0}`);
-      if (allUsers && allUsers.length > 0) {
-        allUsers.forEach(user => {
-          console.log(`   - ${user.username} (${user.role})`);
+    const loginResponse = await axios.post(`${API_URL}/auth/login`, loginData);
+    console.log('📡 Resposta do login:', loginResponse.data);
+
+    if (loginResponse.data.success) {
+      const token = loginResponse.data.data.token;
+      console.log('🎫 Token recebido:', token.substring(0, 20) + '...');
+
+      // Teste 4: Verificar token
+      console.log('\n🔍 Teste 4: Verificando token...');
+      try {
+        const verifyResponse = await axios.get(`${API_URL}/auth/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
+        console.log('✅ Token verificado com sucesso:', verifyResponse.data);
+      } catch (error) {
+        console.log('❌ Erro ao verificar token:', error.response?.data || error.message);
       }
+
+      // Teste 5: Testar endpoint protegido
+      console.log('\n🔒 Teste 5: Testando endpoint protegido...');
+      try {
+        const eventsResponse = await axios.get(`${API_URL}/events`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log('✅ Endpoint protegido funcionando:', eventsResponse.data);
+      } catch (error) {
+        console.log('❌ Erro no endpoint protegido:', error.response?.data || error.message);
+      }
+    } else {
+      console.log('❌ Login falhou:', loginResponse.data.error);
     }
 
   } catch (error) {
-    console.error('❌ Erro no teste:', error);
+    console.error('❌ Erro geral:', error.message);
+    if (error.response) {
+      console.error('📡 Resposta do servidor:', error.response.data);
+    }
   }
 }
 
-testAdminUser(); 
+testAdmin(); 

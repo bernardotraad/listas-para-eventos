@@ -16,4 +16,8 @@ router.get('/verify', AuthController.verifyToken);
 // POST /api/auth/register
 router.post('/register', authenticateToken, requireAdmin, AuthController.register);
 
+// Verificar configuração do ambiente (para debug)
+// GET /api/auth/env-check
+router.get('/env-check', AuthController.checkEnvironment);
+
 export default router; 

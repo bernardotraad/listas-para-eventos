@@ -198,6 +198,8 @@ export class AuthController {
       console.log('📋 Auth header:', authHeader);
       console.log('🎫 Token:', token ? `${token.substring(0, 20)}...` : 'null');
       console.log('🎫 Token completo:', token);
+      console.log('🔐 JWT_SECRET configurado:', !!process.env.JWT_SECRET);
+      console.log('🔐 JWT_SECRET length:', process.env.JWT_SECRET?.length);
 
       if (!token) {
         console.log('❌ Token não fornecido');
@@ -218,45 +220,93 @@ export class AuthController {
         });
       }
 
-      console.log('🔐 JWT_SECRET configurado:', !!process.env.JWT_SECRET);
-      console.log('🔐 JWT_SECRET length:', process.env.JWT_SECRET?.length);
-      
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
-      console.log('✅ Token decodificado:', decoded);
-      
-      const supabase = getAuthSupabase();
-      const { data: user, error } = await supabase
-        .from('users')
-        .select('id, username, email, role, full_name, is_active, created_at, updated_at')
-        .eq('id', decoded.userId)
-        .eq('is_active', true)
-        .single();
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
+        console.log('✅ Token decodificado:', decoded);
+        
+        const supabase = getAuthSupabase();
+        const { data: user, error } = await supabase
+          .from('users')
+          .select('id, username, email, role, full_name, is_active, created_at, updated_at')
+          .eq('id', decoded.userId)
+          .eq('is_active', true)
+          .single();
 
-      console.log('👤 Usuário encontrado:', user);
-      console.log('❌ Erro na busca:', error);
+        console.log('👤 Usuário encontrado:', user);
+        console.log('❌ Erro na busca:', error);
 
-      if (error || !user) {
-        console.log('❌ Usuário não encontrado ou erro');
+        if (error || !user) {
+          console.log('❌ Usuário não encontrado ou erro');
+          return res.status(401).json({
+            success: false,
+            error: 'Token inválido'
+          });
+        }
+
+        console.log('✅ Token válido para usuário:', user.username);
+
+        const response: ApiResponse<typeof user> = {
+          success: true,
+          data: user,
+          message: 'Token válido'
+        };
+
+        res.json(response);
+      } catch (jwtError) {
+        console.error('❌ Erro ao verificar JWT:', jwtError);
         return res.status(401).json({
           success: false,
           error: 'Token inválido'
         });
       }
-
-      console.log('✅ Token válido para usuário:', user.username);
-
-      const response: ApiResponse<typeof user> = {
-        success: true,
-        data: user,
-        message: 'Token válido'
-      };
-
-      res.json(response);
     } catch (error) {
       console.error('❌ Erro na verificação do token:', error);
       res.status(401).json({
         success: false,
         error: 'Token inválido'
+      });
+    }
+  }
+
+  // Verificar configuração do ambiente (para debug)
+  static async checkEnvironment(req: Request, res: Response) {
+    try {
+      const envCheck = {
+        jwtSecret: {
+          configured: !!process.env.JWT_SECRET,
+          length: process.env.JWT_SECRET?.length || 0,
+          preview: process.env.JWT_SECRET ? process.env.JWT_SECRET.substring(0, 10) + '...' : 'not set'
+        },
+        supabase: {
+          url: {
+            configured: !!process.env.SUPABASE_URL,
+            value: process.env.SUPABASE_URL ? 'set' : 'not set'
+          },
+          serviceRoleKey: {
+            configured: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+            length: process.env.SUPABASE_SERVICE_ROLE_KEY?.length || 0
+          },
+          anonKey: {
+            configured: !!process.env.SUPABASE_ANON_KEY,
+            length: process.env.SUPABASE_ANON_KEY?.length || 0
+          }
+        },
+        cors: {
+          origin: process.env.CORS_ORIGIN || 'not set'
+        },
+        nodeEnv: process.env.NODE_ENV || 'not set'
+      };
+
+      res.json({
+        success: true,
+        data: envCheck,
+        message: 'Configuração do ambiente'
+      });
+    } catch (error) {
+      console.error('Erro ao verificar ambiente:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno do servidor'
       });
     }
   }

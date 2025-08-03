@@ -34,18 +34,28 @@ class ApiService {
         console.log('📋 Authorization header:', `Bearer ${token.substring(0, 20)}...`);
       } else {
         console.log('❌ Nenhum token encontrado no localStorage');
+        console.log('🔗 URL da requisição (sem token):', config.url);
       }
       return config;
     });
 
     // Interceptor para tratamento de erros
     this.api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log('✅ Resposta bem-sucedida para:', response.config.url);
+        return response;
+      },
       (error) => {
+        console.error('❌ Erro na requisição:', error.config?.url);
+        console.error('❌ Status do erro:', error.response?.status);
+        console.error('❌ Dados do erro:', error.response?.data);
+        
         if (error.response?.status === 401) {
+          console.log('🔐 Erro 401 - Token inválido ou expirado');
           // Não fazer logout automático para o endpoint de verificação de token
           // pois isso pode causar loops de logout
           if (!error.config?.url?.includes('/auth/verify')) {
+            console.log('🗑️ Limpando localStorage devido a erro 401');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';

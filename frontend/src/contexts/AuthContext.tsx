@@ -31,6 +31,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
 
+        console.log('🔍 Inicializando autenticação...');
+        console.log('🎫 Token armazenado:', storedToken ? storedToken.substring(0, 20) + '...' : 'null');
+        console.log('👤 Usuário armazenado:', storedUser ? JSON.parse(storedUser).username : 'null');
+
         if (storedToken && storedUser) {
           console.log('🔍 Verificando token armazenado...');
           try {
@@ -88,13 +92,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // Verificar se foi salvo corretamente
         const savedToken = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
         console.log('💾 Token salvo no localStorage:', savedToken ? savedToken.substring(0, 20) + '...' : 'null');
+        console.log('💾 Usuário salvo no localStorage:', savedUser ? JSON.parse(savedUser).username : 'null');
         
         // Atualizar estado
         setToken(newToken);
         setUser(newUser);
         
         console.log('✅ Login realizado com sucesso!');
+        console.log('👤 Estado do usuário atualizado:', newUser.username);
+        console.log('🎫 Estado do token atualizado:', newToken.substring(0, 20) + '...');
+        
         toast.success('Login realizado com sucesso!');
         return true; // Indica sucesso
       } else {
