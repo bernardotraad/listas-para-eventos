@@ -16,7 +16,11 @@ app.use(helmet());
 
 // Configuração do CORS
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://listas-para-eventos.netlify.app',
+    'https://listas-para-eventos.vercel.app'
+  ],
   credentials: true
 }));
 
