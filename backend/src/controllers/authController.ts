@@ -1,8 +1,25 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { from } from '../config/database';
+import { createClient } from '@supabase/supabase-js';
 import { LoginDto, CreateUserDto, AuthResponse, ApiResponse } from '../types';
+
+// Função para obter cliente Supabase com service role key para autenticação
+function getAuthSupabase() {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são obrigatórios');
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+}
 
 // Controlador de autenticação
 export class AuthController {
@@ -19,17 +36,22 @@ export class AuthController {
         });
       }
 
-      // Buscar usuário no banco usando Supabase
+      // Buscar usuário no banco usando Supabase com service role key
       console.log('🔍 Buscando usuário:', username);
+      
+      const supabase = getAuthSupabase();
       
       // Primeiro, vamos verificar se a tabela users existe e tem dados
       console.log('📋 Verificando tabela users...');
-      const { data: allUsers, error: allUsersError } = await from('users').select('username, email, role');
+      const { data: allUsers, error: allUsersError } = await supabase
+        .from('users')
+        .select('username, email, role');
       console.log('👥 Todos os usuários:', allUsers);
       console.log('❌ Erro ao buscar todos:', allUsersError);
       
       // Agora buscar o usuário específico
-      const { data: users, error } = await from('users')
+      const { data: users, error } = await supabase
+        .from('users')
         .select('id, username, email, password_hash, role, full_name, is_active, created_at, updated_at')
         .eq('username', username)
         .single();
@@ -108,7 +130,9 @@ export class AuthController {
       }
 
       // Verificar se username já existe
-      const { data: existingUsers } = await from('users')
+      const supabase = getAuthSupabase();
+      const { data: existingUsers } = await supabase
+        .from('users')
         .select('id')
         .or(`username.eq.${username},email.eq.${email}`);
 
@@ -124,7 +148,8 @@ export class AuthController {
       const passwordHash = await bcrypt.hash(password, saltRounds);
 
       // Inserir novo usuário
-      const { data: newUser, error } = await from('users')
+      const { data: newUser, error } = await supabase
+        .from('users')
         .insert({
           username,
           email,
@@ -174,7 +199,9 @@ export class AuthController {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
       
-      const { data: user, error } = await from('users')
+      const supabase = getAuthSupabase();
+      const { data: user, error } = await supabase
+        .from('users')
         .select('id, username, email, role, full_name, is_active, created_at, updated_at')
         .eq('id', decoded.userId)
         .eq('is_active', true)

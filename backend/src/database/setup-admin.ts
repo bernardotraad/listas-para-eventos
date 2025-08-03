@@ -1,9 +1,41 @@
-import { supabase } from '../config/database';
+import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function setupAdmin() {
   try {
     console.log('🔧 Configurando usuário admin...');
+
+    // Verificar se temos a service role key para bypass RLS
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = process.env.SUPABASE_URL;
+    
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL não encontrada no arquivo .env');
+    }
+
+    // Usar service role key se disponível, senão usar anon key
+    const supabaseKey = serviceRoleKey || process.env.SUPABASE_ANON_KEY;
+    
+    if (!supabaseKey) {
+      throw new Error('SUPABASE_SERVICE_ROLE_KEY ou SUPABASE_ANON_KEY não encontrada no arquivo .env');
+    }
+
+    // Criar cliente Supabase com a chave apropriada
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+
+    if (serviceRoleKey) {
+      console.log('🔑 Usando service role key (bypass RLS)');
+    } else {
+      console.log('⚠️  Usando anon key (pode falhar devido a RLS)');
+    }
 
     // Verificar se o admin já existe
     const { data: existingAdmin } = await supabase
