@@ -127,8 +127,9 @@ CREATE POLICY "Name lists are deletable by authenticated users" ON name_lists
     FOR DELETE USING (auth.role() = 'authenticated');
 
 -- Inserir usuário admin padrão (senha: admin123)
+-- Hash gerado com bcrypt: bcrypt.hash('admin123', 12)
 INSERT INTO users (username, email, password_hash, role, full_name) 
-VALUES ('admin', 'admin@eventos.com', '$2b$10$rQZ8K9mN2pL1vX3yW4uI5oP6qR7sT8uV9wX0yZ1aB2cD3eF4gH5iJ6kL7mN8oP9', 'admin', 'Administrador do Sistema');
+VALUES ('admin', 'admin@eventos.com', '$2a$12$zP/TC57tcO1xO6CYGmkLm.8gxhuzgaCPGIIzcHVrZmAerMcaabkDO', 'admin', 'Administrador do Sistema');
 
 -- Inserir alguns eventos de exemplo
 INSERT INTO events (name, description, location, event_date, event_time, capacity, created_by) 

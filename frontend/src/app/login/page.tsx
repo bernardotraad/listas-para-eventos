@@ -36,11 +36,12 @@ export default function LoginPage() {
     
     if (!validateForm()) return;
     
-    try {
-      await login(username, password);
-      router.push('/dashboard');
-    } catch (error) {
-      // Erro já tratado no contexto
+    const success = await login(username, password);
+    if (success) {
+      // Pequeno delay para mostrar o toast de sucesso
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
     }
   };
 

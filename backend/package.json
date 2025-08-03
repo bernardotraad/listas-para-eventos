@@ -9,6 +9,7 @@
     "start": "ts-node src/index.ts",
     "migrate": "ts-node src/database/migrate.ts",
     "setup-admin": "ts-node src/database/setup-admin.ts",
+    "setup-events": "ts-node src/database/setup-events.ts",
     "postinstall": "npm run build"
   },
   "dependencies": {

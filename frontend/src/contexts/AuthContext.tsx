@@ -72,6 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(newUser);
         
         toast.success('Login realizado com sucesso!');
+        return true; // Indica sucesso
       } else {
         throw new Error(response.error || 'Erro no login');
       }
@@ -79,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Erro no login:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Erro no login';
       toast.error(errorMessage);
-      throw error;
+      return false; // Indica falha
     } finally {
       setIsLoading(false);
     }
