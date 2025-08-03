@@ -31,7 +31,7 @@ export default function HomePage() {
         } else {
           console.log('⚠️ Nenhum evento encontrado ou erro na resposta');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Erro ao carregar eventos:', error);
         console.error('❌ Response data:', error.response?.data);
         console.error('❌ Response status:', error.response?.status);
