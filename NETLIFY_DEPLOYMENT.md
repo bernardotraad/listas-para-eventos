@@ -7,7 +7,11 @@
 - ✅ Atualizado Node.js para versão 20
 - ✅ Adicionado comando de instalação explícito no `netlify.toml`
 
-### 2. **Configuração do Build**
+### 2. **Erro "Please install @types/react"**
+- ✅ Movido `@types/react`, `@types/react-dom`, `@types/node` e `typescript` para `dependencies`
+- ✅ Garantido que todas as dependências de build estão em produção
+
+### 3. **Configuração do Build**
 - ✅ Comando de build atualizado: `npm install && npm run build`
 - ✅ Adicionado `NPM_FLAGS = "--legacy-peer-deps"`
 - ✅ Configurado diretório base correto: `frontend`
@@ -87,7 +91,11 @@ NODE_VERSION=20
   "dependencies": {
     "tailwindcss": "^3.3.6",
     "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32"
+    "postcss": "^8.4.32",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
   }
 }
 ```
@@ -103,6 +111,7 @@ NODE_VERSION=20
 
 2. **Verificar dependências**:
    - Confirme que `tailwindcss` está em `dependencies`
+   - Confirme que `@types/react` está em `dependencies`
    - Verifique se não há conflitos de versão
 
 3. **Limpar cache do Netlify**:
@@ -126,8 +135,8 @@ node --version
 
 # Verificar dependências
 npm list tailwindcss
-npm list autoprefixer
-npm list postcss
+npm list @types/react
+npm list typescript
 ```
 
 ## 🔄 Próximos Passos
@@ -135,7 +144,7 @@ npm list postcss
 1. **Fazer commit das mudanças**:
    ```bash
    git add .
-   git commit -m "Fix Netlify build: move Tailwind to dependencies"
+   git commit -m "Fix Netlify build: move TypeScript types to dependencies"
    git push origin main
    ```
 
