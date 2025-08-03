@@ -28,6 +28,7 @@ Render oferece um plano gratuito perfeito para projetos pequenos como o seu. Aqu
    - **Name**: `listas-eventos-backend`
    - **Root Directory**: `backend`
    - **Runtime**: `Node`
+   - **Node Version**: `18` (ou deixe automático)
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
 
@@ -125,9 +126,10 @@ CORS_ORIGIN=https://seu-app.netlify.app
 
 ### Problemas comuns:
 
-1. **Erro de build**
-   - Verifique se o `package.json` está correto
-   - Confirme se o TypeScript está configurado
+1. **Erro de build TypeScript**
+   - O projeto já está configurado com `--skipLibCheck` para evitar erros de tipos
+   - Se persistir, verifique se todas as dependências estão instaladas
+   - Confirme se o Node.js versão 18+ está sendo usado
 
 2. **Erro de conexão**
    - Verifique se as variáveis de ambiente estão corretas
@@ -140,6 +142,10 @@ CORS_ORIGIN=https://seu-app.netlify.app
 4. **Sleep mode lento**
    - Primeira requisição após 15min pode demorar 10-30 segundos
    - Isso é normal no plano gratuito
+
+5. **Erro de dependências**
+   - Execute `npm install` localmente para testar
+   - Verifique se o `package-lock.json` está atualizado
 
 ## 📊 Monitoramento
 
