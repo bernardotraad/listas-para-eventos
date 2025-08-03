@@ -28,7 +28,12 @@ class ApiService {
     this.api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token');
       if (token) {
+        console.log('🔑 Token encontrado no localStorage:', token.substring(0, 20) + '...');
+        console.log('🔗 URL da requisição:', config.url);
         config.headers.Authorization = `Bearer ${token}`;
+        console.log('📋 Authorization header:', `Bearer ${token.substring(0, 20)}...`);
+      } else {
+        console.log('❌ Nenhum token encontrado no localStorage');
       }
       return config;
     });
@@ -38,9 +43,13 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
+          // Não fazer logout automático para o endpoint de verificação de token
+          // pois isso pode causar loops de logout
+          if (!error.config?.url?.includes('/auth/verify')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }

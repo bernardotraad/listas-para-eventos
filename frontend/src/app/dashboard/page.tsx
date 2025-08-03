@@ -37,10 +37,14 @@ export default function DashboardPage() {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
+        console.log('📊 Carregando dados do dashboard...');
+        console.log('👤 Usuário atual:', user);
         setIsLoading(true);
         
         // Carregar eventos
+        console.log('📅 Carregando eventos...');
         const eventsResponse = await apiService.getAllEvents();
+        console.log('📡 Resposta dos eventos:', eventsResponse);
         if (eventsResponse.success && eventsResponse.data) {
           const events = eventsResponse.data;
           const activeEvents = events.filter(e => e.status === 'ativo');
@@ -51,6 +55,7 @@ export default function DashboardPage() {
             totalEvents: events.length,
             activeEvents: activeEvents.length
           }));
+          console.log('✅ Eventos carregados com sucesso');
         }
 
         // Carregar dados de participantes (se for portaria)
@@ -63,13 +68,17 @@ export default function DashboardPage() {
           }));
         }
       } catch (error) {
-        console.error('Erro ao carregar dados do dashboard:', error);
+        console.error('❌ Erro ao carregar dados do dashboard:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadDashboardData();
+    if (user) {
+      loadDashboardData();
+    } else {
+      console.log('⏳ Aguardando usuário para carregar dashboard...');
+    }
   }, [user]);
 
   const formatDate = (dateString: string) => {

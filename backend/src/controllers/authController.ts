@@ -94,6 +94,9 @@ export class AuthController {
         { expiresIn: '24h' }
       );
 
+      console.log('🔐 Token gerado:', token.substring(0, 20) + '...');
+      console.log('🔐 JWT_SECRET configurado:', !!process.env.JWT_SECRET);
+
       // Remover password_hash da resposta
       const { password_hash, ...userWithoutPassword } = users;
 
@@ -106,6 +109,7 @@ export class AuthController {
         message: 'Login realizado com sucesso'
       };
 
+      console.log('📤 Enviando resposta de login...');
       res.json(response);
     } catch (error) {
       console.error('Erro no login:', error);
@@ -190,14 +194,35 @@ export class AuthController {
       const authHeader = req.headers['authorization'];
       const token = authHeader && authHeader.split(' ')[1];
 
+      console.log('🔍 Verificando token...');
+      console.log('📋 Auth header:', authHeader);
+      console.log('🎫 Token:', token ? `${token.substring(0, 20)}...` : 'null');
+      console.log('🎫 Token completo:', token);
+
       if (!token) {
+        console.log('❌ Token não fornecido');
         return res.status(401).json({
           success: false,
           error: 'Token não fornecido'
         });
       }
 
+      // Verificar se o token tem o formato correto (3 partes separadas por pontos)
+      const tokenParts = token.split('.');
+      console.log('🔍 Partes do token:', tokenParts.length);
+      if (tokenParts.length !== 3) {
+        console.log('❌ Token malformado - não tem 3 partes');
+        return res.status(401).json({
+          success: false,
+          error: 'Token malformado'
+        });
+      }
+
+      console.log('🔐 JWT_SECRET configurado:', !!process.env.JWT_SECRET);
+      console.log('🔐 JWT_SECRET length:', process.env.JWT_SECRET?.length);
+      
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
+      console.log('✅ Token decodificado:', decoded);
       
       const supabase = getAuthSupabase();
       const { data: user, error } = await supabase
@@ -207,12 +232,18 @@ export class AuthController {
         .eq('is_active', true)
         .single();
 
+      console.log('👤 Usuário encontrado:', user);
+      console.log('❌ Erro na busca:', error);
+
       if (error || !user) {
+        console.log('❌ Usuário não encontrado ou erro');
         return res.status(401).json({
           success: false,
           error: 'Token inválido'
         });
       }
+
+      console.log('✅ Token válido para usuário:', user.username);
 
       const response: ApiResponse<typeof user> = {
         success: true,
@@ -222,7 +253,7 @@ export class AuthController {
 
       res.json(response);
     } catch (error) {
-      console.error('Erro na verificação do token:', error);
+      console.error('❌ Erro na verificação do token:', error);
       res.status(401).json({
         success: false,
         error: 'Token inválido'

@@ -32,16 +32,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUser = localStorage.getItem('user');
 
         if (storedToken && storedUser) {
-          // Verificar se o token ainda é válido
-          const response = await apiService.verifyToken();
-          if (response.success && response.data) {
-            setUser(response.data);
-            setToken(storedToken);
-          } else {
-            // Token inválido, limpar storage
+          console.log('🔍 Verificando token armazenado...');
+          try {
+            // Verificar se o token ainda é válido
+            const response = await apiService.verifyToken();
+            console.log('📡 Resposta da verificação:', response);
+            if (response.success && response.data) {
+              console.log('✅ Token válido, usuário autenticado');
+              setUser(response.data);
+              setToken(storedToken);
+            } else {
+              console.log('❌ Token inválido na resposta');
+              // Token inválido, limpar storage
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+            }
+          } catch (verifyError) {
+            console.error('❌ Erro ao verificar token:', verifyError);
+            // Se a verificação falhar, limpar storage
             localStorage.removeItem('token');
             localStorage.removeItem('user');
           }
+        } else {
+          console.log('🔍 Nenhum token armazenado encontrado');
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
@@ -66,9 +79,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.success && response.data) {
         const { token: newToken, user: newUser } = response.data;
         
+        console.log('🎫 Token recebido da API:', newToken.substring(0, 20) + '...');
+        console.log('👤 Usuário recebido:', newUser);
+        
         // Salvar no localStorage
         localStorage.setItem('token', newToken);
         localStorage.setItem('user', JSON.stringify(newUser));
+        
+        // Verificar se foi salvo corretamente
+        const savedToken = localStorage.getItem('token');
+        console.log('💾 Token salvo no localStorage:', savedToken ? savedToken.substring(0, 20) + '...' : 'null');
         
         // Atualizar estado
         setToken(newToken);
