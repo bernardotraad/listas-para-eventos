@@ -1,0 +1,35 @@
+{
+  "name": "listas-eventos-backend",
+  "description": "Backend API para sistema de listas de eventos",
+  "repository": "https://github.com/your-username/listas-para-eventos",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["node", "express", "typescript", "supabase"],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment (development/production)",
+      "value": "production"
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT tokens",
+      "generator": "secret"
+    },
+    "CORS_ORIGIN": {
+      "description": "CORS origin for frontend",
+      "value": "https://your-netlify-app.netlify.app"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "npm run migrate"
+  }
+} 
