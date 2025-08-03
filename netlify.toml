@@ -1,7 +1,6 @@
 [build]
   base = "frontend"
   command = "npm install && npm run build"
-  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -12,11 +11,6 @@
   to = "/.netlify/functions/api-proxy/:splat"
   status = 200
   force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 [functions]
   directory = "functions"
