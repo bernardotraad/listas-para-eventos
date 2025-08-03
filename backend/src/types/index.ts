@@ -95,4 +95,7 @@ export interface AuthResponse {
 // Extensão do Express Request para incluir usuário autenticado
 export interface AuthenticatedRequest extends Request {
   user?: Omit<User, 'password_hash'>;
+  body: any;
+  params: any;
+  headers: any;
 } 

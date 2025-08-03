@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc --skipLibCheck --noEmitOnError",
+    "build": "tsc --skipLibCheck",
     "start": "node dist/index.js",
     "migrate": "node dist/database/migrate.js",
     "postinstall": "npm run build"
@@ -27,6 +27,15 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.10.5",
+    "@types/body-parser": "^1.19.5",
+    "@types/connect": "^3.4.38",
+    "@types/http-errors": "^2.0.4",
+    "@types/mime": "^3.0.4",
+    "@types/ms": "^0.7.31",
+    "@types/qs": "^6.9.9",
+    "@types/range-parser": "^1.2.7",
+    "@types/send": "^0.17.4",
+    "@types/serve-static": "^1.15.5",
     "typescript": "^5.3.3",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2"
