@@ -22,12 +22,19 @@ export class AuthController {
       // Buscar usuário no banco usando Supabase
       console.log('🔍 Buscando usuário:', username);
       
+      // Primeiro, vamos verificar se a tabela users existe e tem dados
+      console.log('📋 Verificando tabela users...');
+      const { data: allUsers, error: allUsersError } = await from('users').select('username, email, role');
+      console.log('👥 Todos os usuários:', allUsers);
+      console.log('❌ Erro ao buscar todos:', allUsersError);
+      
+      // Agora buscar o usuário específico
       const { data: users, error } = await from('users')
         .select('id, username, email, password_hash, role, full_name, is_active, created_at, updated_at')
         .eq('username', username)
         .single();
 
-      console.log('📊 Resultado da busca:', { users, error });
+      console.log('📊 Resultado da busca específica:', { users, error });
 
       if (error || !users) {
         console.log('❌ Usuário não encontrado ou erro:', error);
