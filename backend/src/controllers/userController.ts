@@ -36,6 +36,95 @@ export class UserController {
     }
   }
 
+  // Criar novo usuário
+  static async createUser(req: Request, res: Response) {
+    try {
+      const { username, password, email, role, full_name, is_active } = req.body;
+
+      // Validações
+      if (!username || !password || !full_name) {
+        return res.status(400).json({
+          success: false,
+          error: 'Username, senha e nome completo são obrigatórios'
+        });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({
+          success: false,
+          error: 'A senha deve ter pelo menos 6 caracteres'
+        });
+      }
+
+      // Verificar se username já existe
+      const { data: existingUser } = await from('users')
+        .select('id')
+        .eq('username', username)
+        .single();
+
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          error: 'Username já existe'
+        });
+      }
+
+      // Verificar se email já existe (se fornecido)
+      if (email) {
+        const { data: existingEmail } = await from('users')
+          .select('id')
+          .eq('email', email)
+          .single();
+
+        if (existingEmail) {
+          return res.status(400).json({
+            success: false,
+            error: 'Email já existe'
+          });
+        }
+      }
+
+      // Hash da senha
+      const saltRounds = 12;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+
+      // Criar usuário
+      const { data: newUser, error } = await from('users')
+        .insert({
+          username,
+          password_hash: passwordHash,
+          email: email || null,
+          role: role || 'portaria',
+          full_name,
+          is_active: is_active !== undefined ? is_active : true
+        })
+        .select('id, username, email, role, full_name, is_active, created_at, updated_at')
+        .single();
+
+      if (error) {
+        console.error('Erro ao criar usuário:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Erro interno do servidor'
+        });
+      }
+
+      const response: ApiResponse<User> = {
+        success: true,
+        data: newUser,
+        message: 'Usuário criado com sucesso'
+      };
+
+      res.status(201).json(response);
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno do servidor'
+      });
+    }
+  }
+
   // Buscar usuário por ID
   static async getUserById(req: Request, res: Response) {
     try {

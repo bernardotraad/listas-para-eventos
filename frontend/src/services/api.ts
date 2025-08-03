@@ -180,6 +180,18 @@ class ApiService {
     return response.data;
   }
 
+  async createUser(userData: {
+    username: string;
+    password: string;
+    full_name: string;
+    email: string;
+    role: 'admin' | 'portaria';
+    is_active: boolean;
+  }): Promise<ApiResponse<User>> {
+    const response: AxiosResponse<ApiResponse<User>> = await this.api.post('/users', userData);
+    return response.data;
+  }
+
   async deleteUser(id: number): Promise<ApiResponse<null>> {
     const response: AxiosResponse<ApiResponse<null>> = await this.api.delete(`/users/${id}`);
     return response.data;

@@ -64,6 +64,7 @@ export interface CreateEventDto {
   event_date: string;
   event_time?: string;
   capacity?: number;
+  status?: 'ativo' | 'cancelado' | 'finalizado';
 }
 
 export interface CreateNameListDto {

@@ -11,6 +11,10 @@ router.use(authenticateToken, requireAdmin);
 // GET /api/users
 router.get('/', UserController.getAllUsers);
 
+// Criar novo usuário
+// POST /api/users
+router.post('/', UserController.createUser);
+
 // Buscar usuário por ID
 // GET /api/users/:id
 router.get('/:id', UserController.getUserById);

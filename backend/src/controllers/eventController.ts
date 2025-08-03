@@ -123,7 +123,7 @@ export class EventController {
   // Criar novo evento
   static async createEvent(req: AuthenticatedRequest, res: Response) {
     try {
-      const { name, description, location, event_date, event_time, capacity }: CreateEventDto = req.body;
+      const { name, description, location, event_date, event_time, capacity, status }: CreateEventDto = req.body;
 
       // Validação básica
       if (!name || !event_date) {
@@ -149,6 +149,7 @@ export class EventController {
           event_date,
           event_time,
           capacity,
+          status: status || 'ativo',
           created_by: req.user.id
         })
         .select()
