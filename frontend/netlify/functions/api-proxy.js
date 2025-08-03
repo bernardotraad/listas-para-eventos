@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+// Using built-in fetch (available in Node.js 18+)
 
 exports.handler = async (event, context) => {
   // Get the API URL from environment variables

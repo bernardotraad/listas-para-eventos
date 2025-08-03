@@ -94,4 +94,5 @@ Para fazer o deploy em produção usando Netlify + Supabase:
 
 - **Instalação Local**: `INSTALACAO.md`
 - **Deploy em Produção**: `DEPLOYMENT.md`
-- **Deploy Alternativo (Railway)**: `RAILWAY_DEPLOYMENT.md` 
+- **Deploy Alternativo (Railway)**: `RAILWAY_DEPLOYMENT.md`
+- **Migração Supabase**: `SUPABASE_MIGRATION.md` 
