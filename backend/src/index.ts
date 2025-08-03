@@ -18,6 +18,7 @@ app.use(helmet());
 app.use(cors({
   origin: [
     'http://localhost:3000',
+    'https://listasparaeventos.netlify.app',
     'https://listas-para-eventos.netlify.app',
     'https://listas-para-eventos.vercel.app'
   ],
