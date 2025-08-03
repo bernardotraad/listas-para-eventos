@@ -60,12 +60,13 @@ echo.
 echo 🎉 Preparação concluída!
 echo.
 echo 📝 Próximos passos:
-echo 1. Configure o Supabase (veja DEPLOYMENT.md)
-echo 2. Deploy do backend no Railway (veja RAILWAY_DEPLOYMENT.md)
+echo 1. Configure o Supabase (veja INSTALACAO.md)
+echo 2. Deploy do backend no Render (GRATUITO) (veja RENDER_DEPLOYMENT.md)
 echo 3. Deploy do frontend no Netlify (veja DEPLOYMENT.md)
 echo 4. Configure as variáveis de ambiente
 echo.
 echo 📚 Documentação:
+echo - RENDER_DEPLOYMENT.md - Deploy gratuito no Render ⭐
 echo - DEPLOYMENT.md - Guia completo de deploy
 echo - RAILWAY_DEPLOYMENT.md - Deploy alternativo no Railway
 echo - INSTALACAO.md - Guia de instalação local

@@ -51,9 +51,10 @@ Para fazer o deploy em produção usando Netlify + Supabase:
 1. **Configure o Supabase**
 - Siga o guia em `DEPLOYMENT.md`
 
-2. **Deploy do Backend**
-- Use Railway (recomendado): `RAILWAY_DEPLOYMENT.md`
-- Ou Heroku: `DEPLOYMENT.md`
+2. **Deploy do Backend (GRATUITO)**
+- **Render (Recomendado)**: `RENDER_DEPLOYMENT.md` - Plano gratuito
+- Railway: `RAILWAY_DEPLOYMENT.md` - $5-10/mês
+- Heroku: `DEPLOYMENT.md` - Pago
 
 3. **Deploy do Frontend**
 - Siga o guia em `DEPLOYMENT.md`
@@ -66,7 +67,8 @@ Para fazer o deploy em produção usando Netlify + Supabase:
 
 ### Produção
 - **Frontend**: `https://seu-app.netlify.app`
-- **Backend API**: `https://seu-app-production.up.railway.app/api`
+- **Backend API**: `https://listas-eventos-backend.onrender.com/api` (Render)
+- **Backend API**: `https://seu-app-production.up.railway.app/api` (Railway)
 
 ## 👥 Perfis de Usuário
 
@@ -94,5 +96,6 @@ Para fazer o deploy em produção usando Netlify + Supabase:
 
 - **Instalação Local**: `INSTALACAO.md`
 - **Deploy em Produção**: `DEPLOYMENT.md`
+- **Deploy Gratuito (Render)**: `RENDER_DEPLOYMENT.md` ⭐
 - **Deploy Alternativo (Railway)**: `RAILWAY_DEPLOYMENT.md`
 - **Migração Supabase**: `SUPABASE_MIGRATION.md` 
