@@ -20,12 +20,21 @@ export default function HomePage() {
     const loadEvents = async () => {
       try {
         setIsLoadingEvents(true);
+        console.log('📅 Carregando eventos ativos...');
+        
         const response = await apiService.getActiveEvents();
+        console.log('📡 Resposta dos eventos:', response);
+        
         if (response.success && response.data) {
+          console.log('✅ Eventos carregados:', response.data);
           setEvents(response.data);
+        } else {
+          console.log('⚠️ Nenhum evento encontrado ou erro na resposta');
         }
       } catch (error) {
-        console.error('Erro ao carregar eventos:', error);
+        console.error('❌ Erro ao carregar eventos:', error);
+        console.error('❌ Response data:', error.response?.data);
+        console.error('❌ Response status:', error.response?.status);
         toast.error('Erro ao carregar eventos');
       } finally {
         setIsLoadingEvents(false);

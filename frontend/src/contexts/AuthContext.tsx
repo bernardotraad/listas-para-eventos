@@ -58,7 +58,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string) => {
     try {
       setIsLoading(true);
+      console.log('🔐 Tentando fazer login com:', username);
+      
       const response = await apiService.login(username, password);
+      console.log('📡 Resposta da API:', response);
       
       if (response.success && response.data) {
         const { token: newToken, user: newUser } = response.data;
@@ -71,14 +74,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(newToken);
         setUser(newUser);
         
+        console.log('✅ Login realizado com sucesso!');
         toast.success('Login realizado com sucesso!');
         return true; // Indica sucesso
       } else {
+        console.error('❌ Erro na resposta da API:', response);
         throw new Error(response.error || 'Erro no login');
       }
     } catch (error: any) {
-      console.error('Erro no login:', error);
+      console.error('❌ Erro detalhado no login:', error);
+      console.error('❌ Response data:', error.response?.data);
+      console.error('❌ Response status:', error.response?.status);
+      
       const errorMessage = error.response?.data?.error || error.message || 'Erro no login';
+      console.error('❌ Mensagem de erro:', errorMessage);
+      
       toast.error(errorMessage);
       return false; // Indica falha
     } finally {
