@@ -48,10 +48,10 @@ export class EventController {
   // Listar eventos ativos (para página pública)
   static async getActiveEvents(req: Request, res: Response) {
     try {
+      // Buscar eventos ativos (removendo filtro de data para mostrar todos os ativos)
       const { data: events, error } = await from('events')
         .select('id, name, description, location, event_date, event_time, capacity, status, created_by, created_at, updated_at')
         .eq('status', 'ativo')
-        .gte('event_date', new Date().toISOString().split('T')[0])
         .order('event_date', { ascending: true });
 
       if (error) {
