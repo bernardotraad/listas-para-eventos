@@ -168,6 +168,37 @@ npm run start        # Executar em modo produção
 
 ### Problemas comuns:
 
+#### Erro de TypeScript no Render
+Se você encontrar erros de TypeScript durante o deploy no Render:
+
+1. **Verificar versão do Node.js**: Certifique-se de que o arquivo `.nvmrc` está configurado para Node.js 20
+2. **Dependências de tipos**: Os tipos TypeScript estão configurados corretamente no `package.json`
+3. **Build simplificado**: O build foi configurado para usar `ts-node` diretamente
+
+#### Erro "ts-node: not found"
+Se o deploy falhar com erro de `ts-node` não encontrado:
+
+1. Verifique se `ts-node` está em `dependencies` (não em `devDependencies`)
+2. Verifique se `typescript` está em `dependencies`
+3. O build script deve ser: `"build": "echo 'Build completed'"`
+
+#### Configuração correta do package.json para Render:
+```json
+{
+  "scripts": {
+    "build": "echo 'Build completed'",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5"
+  }
+}
+```
+
+### Problemas comuns:
+
 1. **Erro de conexão com Supabase**
    - Verifique se as credenciais estão corretas no `.env`
    - Confirme se o projeto está ativo no Supabase
