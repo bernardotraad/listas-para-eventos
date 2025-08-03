@@ -20,12 +20,17 @@ export class AuthController {
       }
 
       // Buscar usuário no banco usando Supabase
+      console.log('🔍 Buscando usuário:', username);
+      
       const { data: users, error } = await from('users')
         .select('id, username, email, password_hash, role, full_name, is_active, created_at, updated_at')
         .eq('username', username)
         .single();
 
+      console.log('📊 Resultado da busca:', { users, error });
+
       if (error || !users) {
+        console.log('❌ Usuário não encontrado ou erro:', error);
         return res.status(401).json({
           success: false,
           error: 'Credenciais inválidas'
@@ -41,8 +46,12 @@ export class AuthController {
       }
 
       // Verificar senha
+      console.log('🔐 Verificando senha...');
       const isValidPassword = await bcrypt.compare(password, users.password_hash);
+      console.log('✅ Senha válida?', isValidPassword);
+      
       if (!isValidPassword) {
+        console.log('❌ Senha inválida');
         return res.status(401).json({
           success: false,
           error: 'Credenciais inválidas'
