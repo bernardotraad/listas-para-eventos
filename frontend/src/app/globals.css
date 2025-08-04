@@ -233,6 +233,11 @@ select:disabled {
 }
 
 /* Select dropdown styling */
+select {
+  background-color: white;
+  color: #374151;
+}
+
 select option {
   background-color: white;
   color: #374151;
@@ -251,4 +256,15 @@ select option:checked {
 select option:disabled {
   background-color: #f9fafb;
   color: #9ca3af;
+}
+
+/* Ensure selected text is visible in closed select */
+select:not([size]) {
+  background-color: white;
+  color: #374151;
+}
+
+select:not([size]):focus {
+  background-color: white;
+  color: #374151;
 } 
