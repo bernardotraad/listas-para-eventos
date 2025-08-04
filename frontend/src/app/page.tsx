@@ -12,6 +12,8 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<number | ''>('');
   const [nameEntries, setNameEntries] = useState<NameEntry[]>([{ name: '' }]);
+  const [namesList, setNamesList] = useState<string>('');
+  const [useBulkMode, setUseBulkMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
 
@@ -73,9 +75,20 @@ export default function HomePage() {
       return;
     }
 
-    const validNames = nameEntries
-      .map(entry => entry.name.trim())
-      .filter(name => name.length > 0);
+    let validNames: string[] = [];
+
+    if (useBulkMode) {
+      // Modo lista: processar nomes do textarea
+      validNames = namesList
+        .split('\n')
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+    } else {
+      // Modo individual: processar campos individuais
+      validNames = nameEntries
+        .map(entry => entry.name.trim())
+        .filter(name => name.length > 0);
+    }
 
     if (validNames.length === 0) {
       toast.error('Adicione pelo menos um nome');
@@ -88,10 +101,10 @@ export default function HomePage() {
       const nameData = {
         event_id: parseInt(selectedEvent.toString()),
         names: validNames,
-        emails: nameEntries
+        emails: useBulkMode ? [] : nameEntries
           .map(entry => entry.email?.trim())
           .filter((email): email is string => email !== undefined && email.length > 0),
-        phones: nameEntries
+        phones: useBulkMode ? [] : nameEntries
           .map(entry => entry.phone?.trim())
           .filter((phone): phone is string => phone !== undefined && phone.length > 0),
       };
@@ -262,62 +275,113 @@ export default function HomePage() {
                 <label className="block text-sm font-medium text-gray-700 leading-5">
                   Nomes dos Participantes *
                 </label>
-                <button
-                  type="button"
-                  onClick={addNameEntry}
-                  className="btn-secondary text-sm flex items-center justify-center space-x-2 w-full sm:w-auto"
-                >
-                  <Plus size={16} />
-                  <span>Adicionar Nome</span>
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setUseBulkMode(false)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      !useBulkMode 
+                        ? 'bg-blue-600 text-white border-blue-600' 
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Individual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUseBulkMode(true)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      useBulkMode 
+                        ? 'bg-blue-600 text-white border-blue-600' 
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Lista
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                {nameEntries.map((entry, index) => (
-                  <div key={index} className="grid grid-cols-1 gap-4">
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="Nome completo *"
-                        value={entry.name}
-                        onChange={(e) => updateNameEntry(index, 'name', e.target.value)}
-                        className="input-field"
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <input
-                          type="email"
-                          placeholder="Email (opcional)"
-                          value={entry.email || ''}
-                          onChange={(e) => updateNameEntry(index, 'email', e.target.value)}
-                          className="input-field"
-                        />
-                      </div>
-                      <div className="flex space-x-3">
-                        <input
-                          type="tel"
-                          placeholder="Telefone (opcional)"
-                          value={entry.phone || ''}
-                          onChange={(e) => updateNameEntry(index, 'phone', e.target.value)}
-                          className="input-field flex-1"
-                        />
-                        {nameEntries.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeNameEntry(index)}
-                            className="btn-error px-3 flex items-center justify-center min-w-[44px]"
-                            aria-label="Remover nome"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+              {!useBulkMode ? (
+                // Modo Individual
+                <div>
+                  <div className="flex justify-end mb-4">
+                    <button
+                      type="button"
+                      onClick={addNameEntry}
+                      className="btn-secondary text-sm flex items-center justify-center space-x-2"
+                    >
+                      <Plus size={16} />
+                      <span>Adicionar Nome</span>
+                    </button>
                   </div>
-                ))}
-              </div>
+
+                  <div className="space-y-4">
+                    {nameEntries.map((entry, index) => (
+                      <div key={index} className="grid grid-cols-1 gap-4">
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Nome completo *"
+                            value={entry.name}
+                            onChange={(e) => updateNameEntry(index, 'name', e.target.value)}
+                            className="input-field"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <input
+                              type="email"
+                              placeholder="Email (opcional)"
+                              value={entry.email || ''}
+                              onChange={(e) => updateNameEntry(index, 'email', e.target.value)}
+                              className="input-field"
+                            />
+                          </div>
+                          <div className="flex space-x-3">
+                            <input
+                              type="tel"
+                              placeholder="Telefone (opcional)"
+                              value={entry.phone || ''}
+                              onChange={(e) => updateNameEntry(index, 'phone', e.target.value)}
+                              className="input-field flex-1"
+                            />
+                            {nameEntries.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeNameEntry(index)}
+                                className="btn-error px-3 flex items-center justify-center min-w-[44px]"
+                                aria-label="Remover nome"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                // Modo Lista
+                <div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cole a lista de nomes (um nome por linha)
+                    </label>
+                    <textarea
+                      value={namesList}
+                      onChange={(e) => setNamesList(e.target.value)}
+                      placeholder="João Silva&#10;Maria Santos&#10;Pedro Oliveira&#10;Ana Costa&#10;..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white placeholder-gray-500 text-sm leading-5 min-h-[200px] resize-y"
+                      required
+                    />
+                    <p className="text-sm text-gray-500 mt-2">
+                      {namesList.split('\n').filter(name => name.trim().length > 0).length} nomes detectados
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -349,9 +413,9 @@ export default function HomePage() {
             <div className="bg-blue-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-4 sm:mb-6">
               <Users className="text-blue-600" size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2 sm:mb-3 leading-6">Múltiplos Nomes</h3>
+            <h3 className="font-semibold text-gray-900 mb-2 sm:mb-3 leading-6">Lista de Nomes</h3>
             <p className="text-gray-600 text-sm leading-5">
-              Envie vários nomes de uma vez para agilizar o processo de inscrição
+              Cole uma lista grande de nomes de uma vez, um nome por linha
             </p>
           </div>
           <div className="text-center">
