@@ -10,8 +10,8 @@ import {
   User 
 } from '@/types';
 
-// Configuração base do axios
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Configuração base do axios - Use API proxy to avoid CORS issues
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 class ApiService {
   private api: AxiosInstance;
