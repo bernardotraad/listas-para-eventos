@@ -20,7 +20,8 @@ app.use(cors({
     'http://localhost:3000',
     'https://listasparaeventos.netlify.app',
     'https://listas-para-eventos.netlify.app',
-    'https://listas-para-eventos.vercel.app'
+    'https://listas-para-eventos.vercel.app',
+    'https://listasparaeventos.vercel.app'
   ],
   credentials: true
 }));
