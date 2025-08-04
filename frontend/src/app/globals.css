@@ -30,7 +30,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent horizontal scroll on mobile */
   overflow-x: hidden;
 }
 
@@ -121,7 +120,6 @@ label {
 
 /* Mobile-first responsive design */
 @media (max-width: 640px) {
-  /* Small mobile devices */
   .card {
     @apply p-3 mx-2;
   }
@@ -135,28 +133,19 @@ label {
   }
   
   .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-error {
-    @apply py-3 px-4 text-sm min-h-[44px];
+    @apply py-3 px-4 text-sm;
+    min-height: 44px;
   }
   
   .input-field {
-    @apply py-3 px-3 text-base min-h-[44px];
+    @apply py-3 px-3 text-base;
+    min-height: 44px;
   }
   
-  /* Ensure touch targets are at least 44px */
   button, a, input, select, textarea {
     min-height: 44px;
   }
   
-  /* Better spacing for mobile forms */
-  .space-y-6 > * + * {
-    margin-top: 1.25rem;
-  }
-  
-  .space-y-4 > * + * {
-    margin-top: 1rem;
-  }
-  
-  /* Improve table responsiveness */
   table {
     font-size: 0.75rem;
   }
@@ -164,41 +153,31 @@ label {
   th, td {
     @apply px-2 py-2;
   }
+  
+  input, select, textarea {
+    font-size: 16px;
+  }
+  
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (max-width: 768px) {
-  /* Medium mobile devices */
   .card {
     @apply p-4 mx-3;
   }
   
   .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-error {
-    @apply py-2.5 px-3 text-sm min-h-[40px];
+    @apply py-2.5 px-3 text-sm;
+    min-height: 40px;
   }
   
   .input-field {
-    @apply py-2.5 px-3 text-sm min-h-[40px];
+    @apply py-2.5 px-3 text-sm;
+    min-height: 40px;
   }
   
-  /* Improve grid layouts for mobile */
-  .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
-    @apply grid-cols-1;
-  }
-  
-  .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
-    @apply grid-cols-1;
-  }
-  
-  .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-5 {
-    @apply grid-cols-1;
-  }
-  
-  /* Better mobile navigation */
-  .lg\:ml-64 {
-    margin-left: 0;
-  }
-  
-  /* Improve mobile header */
   .text-2xl {
     @apply text-xl;
   }
@@ -207,7 +186,6 @@ label {
     @apply text-2xl;
   }
   
-  /* Better mobile spacing */
   .p-6 {
     @apply p-4;
   }
@@ -218,25 +196,6 @@ label {
   
   .mb-12 {
     @apply mb-8;
-  }
-  
-  .space-y-8 > * + * {
-    margin-top: 1.5rem;
-  }
-}
-
-@media (max-width: 1024px) {
-  /* Tablet devices */
-  .lg\:grid-cols-3 {
-    @apply grid-cols-2;
-  }
-  
-  .lg\:grid-cols-4 {
-    @apply grid-cols-2;
-  }
-  
-  .lg\:grid-cols-5 {
-    @apply grid-cols-3;
   }
 }
 
@@ -262,68 +221,12 @@ select:disabled {
   @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
 }
 
-/* Mobile-specific improvements */
-@media (max-width: 640px) {
-  /* Prevent zoom on input focus for iOS */
-  input, select, textarea {
-    font-size: 16px;
-  }
-  
-  /* Better mobile scrolling */
-  .overflow-x-auto {
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Improve mobile button spacing */
-  .flex.space-x-2 > * + * {
-    margin-left: 0.5rem;
-  }
-  
-  .flex.space-x-3 > * + * {
-    margin-left: 0.75rem;
-  }
-  
-  .flex.space-x-4 > * + * {
-    margin-left: 1rem;
-  }
-  
-  /* Better mobile form layout */
-  .grid.grid-cols-1.md\:grid-cols-3 {
-    @apply grid-cols-1 gap-3;
-  }
-  
-  /* Improve mobile card spacing */
-  .space-y-6 {
-    @apply space-y-4;
-  }
-  
-  /* Better mobile text sizing */
-  .text-sm {
-    @apply text-base;
-  }
-  
-  .text-xs {
-    @apply text-sm;
-  }
-}
-
 /* Touch-friendly improvements */
 @media (hover: none) and (pointer: coarse) {
-  /* Remove hover effects on touch devices */
-  .hover\:bg-gray-100:hover {
-    background-color: transparent;
-  }
-  
-  .hover\:bg-blue-700:hover {
-    background-color: rgb(37, 99, 235);
-  }
-  
-  /* Increase touch targets */
   button, a, input, select, textarea {
     min-height: 44px;
   }
   
-  /* Better touch feedback */
   button:active, a:active {
     transform: scale(0.98);
   }
