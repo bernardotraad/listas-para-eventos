@@ -13,7 +13,7 @@
   force = true
 
 [functions]
-  directory = "functions"
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/*"
@@ -21,4 +21,9 @@
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin" 
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Disable the problematic Next.js plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  enabled = false 
