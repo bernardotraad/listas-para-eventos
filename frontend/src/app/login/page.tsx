@@ -46,18 +46,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <Card className="shadow-xl">
-          <div className="text-center mb-6">
-            <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-6 sm:py-8">
+      <div className="w-full max-w-sm sm:max-w-md">
+        <Card className="shadow-xl border-0">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 sm:mb-6">
               <LogIn className="text-blue-600" size={24} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Login</h1>
-            <p className="text-gray-600 mt-2">Acesse sua conta</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-8 mb-2">Login</h1>
+            <p className="text-sm sm:text-base text-gray-600 leading-6">Acesse sua conta</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <Input
               label="Usuário"
               type="text"
@@ -83,7 +83,8 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-8 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-10 sm:top-10 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -94,16 +95,17 @@ export default function LoginPage() {
               className="w-full"
               loading={isLoading}
               disabled={isLoading}
+              size="lg"
             >
               {!isLoading && <LogIn size={16} className="mr-2" />}
               Entrar
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             <Link 
               href="/" 
-              className="text-sm text-blue-600 hover:text-blue-500 transition-colors"
+              className="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200 leading-5"
             >
               ← Voltar para a página inicial
             </Link>
