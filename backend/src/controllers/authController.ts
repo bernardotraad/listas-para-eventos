@@ -1,25 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { createClient } from '@supabase/supabase-js';
+import { getAuthSupabase } from '../utils/supabase';
 import { LoginDto, CreateUserDto, AuthResponse, ApiResponse } from '../types';
-
-// Função para obter cliente Supabase com service role key para autenticação
-function getAuthSupabase() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
-  
-  if (!supabaseUrl || !serviceRoleKey) {
-    throw new Error('SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY são obrigatórios');
-  }
-
-  return createClient(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  });
-}
 
 // Controlador de autenticação
 export class AuthController {

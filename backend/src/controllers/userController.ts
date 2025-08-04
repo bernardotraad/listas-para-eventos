@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { from } from '../config/database';
+import { getAuthSupabase } from '../utils/supabase';
 import { User, ApiResponse } from '../types';
 
 // Controlador de usuários (apenas para administradores)
@@ -8,7 +9,9 @@ export class UserController {
   // Listar todos os usuários
   static async getAllUsers(req: Request, res: Response) {
     try {
-      const { data: users, error } = await from('users')
+      const supabase = getAuthSupabase();
+      const { data: users, error } = await supabase
+        .from('users')
         .select('id, username, email, role, full_name, is_active, created_at, updated_at')
         .order('created_at', { ascending: false });
 
@@ -39,6 +42,9 @@ export class UserController {
   // Criar novo usuário
   static async createUser(req: Request, res: Response) {
     try {
+      console.log('🔧 Iniciando criação de usuário...');
+      console.log('📋 Dados recebidos:', { username: req.body.username, email: req.body.email, role: req.body.role, full_name: req.body.full_name });
+      
       const { username, password, email, role, full_name, is_active } = req.body;
 
       // Validações
@@ -56,8 +62,12 @@ export class UserController {
         });
       }
 
+      // Usar service role key para operações de usuário
+      const supabase = getAuthSupabase();
+
       // Verificar se username já existe
-      const { data: existingUser } = await from('users')
+      const { data: existingUser } = await supabase
+        .from('users')
         .select('id')
         .eq('username', username)
         .single();
@@ -71,7 +81,8 @@ export class UserController {
 
       // Verificar se email já existe (se fornecido)
       if (email) {
-        const { data: existingEmail } = await from('users')
+        const { data: existingEmail } = await supabase
+          .from('users')
           .select('id')
           .eq('email', email)
           .single();
@@ -85,11 +96,15 @@ export class UserController {
       }
 
       // Hash da senha
+      console.log('🔐 Fazendo hash da senha...');
       const saltRounds = 12;
       const passwordHash = await bcrypt.hash(password, saltRounds);
+      console.log('✅ Hash da senha concluído');
 
       // Criar usuário
-      const { data: newUser, error } = await from('users')
+      console.log('📝 Inserindo usuário no banco...');
+      const { data: newUser, error } = await supabase
+        .from('users')
         .insert({
           username,
           password_hash: passwordHash,
@@ -101,8 +116,10 @@ export class UserController {
         .select('id, username, email, role, full_name, is_active, created_at, updated_at')
         .single();
 
+      console.log('📊 Resultado da inserção:', { newUser, error });
+
       if (error) {
-        console.error('Erro ao criar usuário:', error);
+        console.error('❌ Erro ao criar usuário:', error);
         return res.status(500).json({
           success: false,
           error: 'Erro interno do servidor'
