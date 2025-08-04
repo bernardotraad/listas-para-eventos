@@ -2,33 +2,51 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_URL = 'https://listas-eventos-backend.onrender.com/api';
 
-export async function GET(request: NextRequest) {
-  return handleRequest(request, 'GET');
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest(request, 'GET', params.path);
 }
 
-export async function POST(request: NextRequest) {
-  return handleRequest(request, 'POST');
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest(request, 'POST', params.path);
 }
 
-export async function PUT(request: NextRequest) {
-  return handleRequest(request, 'PUT');
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest(request, 'PUT', params.path);
 }
 
-export async function DELETE(request: NextRequest) {
-  return handleRequest(request, 'DELETE');
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest(request, 'DELETE', params.path);
 }
 
-async function handleRequest(request: NextRequest, method: string) {
+async function handleRequest(
+  request: NextRequest, 
+  method: string, 
+  pathSegments: string[]
+) {
   try {
-    // Get the path from the URL
-    const url = new URL(request.url);
-    const path = url.pathname.replace('/api-proxy', '');
+    // Reconstruct the path from segments
+    const path = '/' + pathSegments.join('/');
     
     // Get query parameters
+    const url = new URL(request.url);
     const queryString = url.search;
     
     // Construct the full URL
     const fullUrl = `${API_URL}${path}${queryString}`;
+    
+    console.log(`🔄 Proxying ${method} request to: ${fullUrl}`);
     
     // Get headers
     const headers = new Headers();
@@ -55,6 +73,8 @@ async function handleRequest(request: NextRequest, method: string) {
     
     const responseData = await response.text();
     
+    console.log(`✅ Response from backend: ${response.status}`);
+    
     // Return the response
     return new NextResponse(responseData, {
       status: response.status,
@@ -66,9 +86,10 @@ async function handleRequest(request: NextRequest, method: string) {
       },
     });
   } catch (error) {
-    console.error('API Proxy Error:', error);
+    console.error('❌ API Proxy Error:', error);
     return new NextResponse(
       JSON.stringify({ 
+        success: false,
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error'
       }),
